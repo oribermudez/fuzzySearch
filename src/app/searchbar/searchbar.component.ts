@@ -39,6 +39,18 @@ export class SearchbarComponent implements OnInit {
     });
   }
 
+  mergedSearch(resultsList) {
+    const searchData = [];
+    resultsList.forEach((list) => {
+      list.forEach((transaction) => {
+        if (searchData.indexOf(transaction) < 0) {
+          searchData.push(transaction);
+        }
+      });
+    });
+    return searchData;
+  }
+
   fuzzySearch() {
     this.transactions = this.originalTransactions;
     const searchResult = [];
@@ -48,7 +60,8 @@ export class SearchbarComponent implements OnInit {
         return String(transaction.amount).includes(char) || transaction.date.includes(char) || transaction.card_last_four.includes(char);
     }));
     console.log('Search Result:', searchResult);
-    this.transactions = searchResult[0];
+    console.log('Merge: ', this.mergedSearch(searchResult));
+    this.transactions = this.mergedSearch(searchResult);
     this.sortByDate();
     });
   }
