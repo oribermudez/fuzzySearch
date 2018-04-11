@@ -24,6 +24,18 @@ export class SearchbarComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.sortByDate();
   }
 
+  sortByDate() {
+    this.transactions.sort((a, b) => {
+    let aDate: any = a.date.split(/\-|\s/);
+    aDate[2] = aDate[2].split('T')[0];
+    let bDate: any = b.date.split(/\-|\s/);
+    bDate[2] = bDate[2].split('T')[0];
+    aDate = new Date (Number(aDate[2]), Number(aDate[1]) - 1, Number(aDate[0]));
+    bDate = new Date (Number(bDate[2]), Number(bDate[1]) - 1, Number(bDate[0]));
+    return +bDate - +aDate;
+    });
+  }
 }
