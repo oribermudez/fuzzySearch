@@ -38,4 +38,18 @@ export class SearchbarComponent implements OnInit {
     return +bDate - +aDate;
     });
   }
+
+  fuzzySearch() {
+    this.transactions = this.originalTransactions;
+    const searchResult = [];
+    this.searchChar = this.mySearch.replace(/\ /g, '').toUpperCase().split('');
+    this.searchChar.forEach((char) => {
+      searchResult.push(this.transactions.filter((transaction) => {
+        return String(transaction.amount).includes(char) || transaction.date.includes(char) || transaction.card_last_four.includes(char);
+    }));
+    console.log('Search Result:', searchResult);
+    this.transactions = searchResult[0];
+    this.sortByDate();
+    });
+  }
 }
