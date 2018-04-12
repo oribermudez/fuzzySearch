@@ -21,7 +21,7 @@ export class SearchbarComponent implements OnInit {
     { amount: 4.69, date: '01-02-2018T02:34', card_last_four: '8488' },
     { amount: 1111.11, date: '15-01-2018T21:34', card_last_four: '9912' }
   ];
-  originalTransactions = this.transactions;
+  originalTransactions = JSON.stringify(this.transactions);
   constructor() {}
 
   ngOnInit() {
@@ -55,10 +55,28 @@ export class SearchbarComponent implements OnInit {
   }
 
   fuzzySearch() {
-    this.transactions = this.originalTransactions;
+    this.transactions = JSON.parse(this.originalTransactions);
     this.query = this.fullQuery();
     const regexp = new RegExp(this.query);
-    this.transactions = this.transactions.filter((transaction) => {
+    this.transactions = this.transactions.filter((transaction: any) => {
+      this.searchChar = this.mySearch.replace(/\ /g, '').toUpperCase().split('');
+      this.searchChar.forEach(char => {
+        if (transaction.date.indexOf(char) !== -1) {
+         const turnToArray = transaction.date.split('');
+         turnToArray[transaction.date.indexOf(char)] = `<strong class="highlight">${char}</strong>`;
+         transaction.date = turnToArray.join('');
+        }
+        if (String(transaction.amount).indexOf(char) !== -1) {
+          const turnToArray = String(transaction.amount).split('');
+          turnToArray[String(transaction.amount).indexOf(char)] = `<strong class="highlight">${char}</strong>`;
+          transaction.amount = turnToArray.join('');
+        }
+        if (transaction.card_last_four.indexOf(char) !== -1) {
+          const turnToArray = transaction.card_last_four.split('');
+          turnToArray[transaction.card_last_four.indexOf(char)] = `<strong class="highlight">${char}</strong>`;
+          transaction.card_last_four = turnToArray.join('');
+        }
+      });
       return regexp.test(String(transaction.amount)) || regexp.test(transaction.date) || regexp.test(transaction.card_last_four) ;
     });
   }
