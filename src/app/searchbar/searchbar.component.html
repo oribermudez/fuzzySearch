@@ -13,9 +13,8 @@
 <ul class="collection">
   <li *ngFor="let transaction of transactions" class="collection-item avatar">
       <i class="material-icons circle blue">payment</i>
-    <p><b>Credit Card:</b> **** **** **** {{transaction.card_last_four}}<br>
-       <b>Amount:</b> ${{transaction.amount}}<br>
-       <b>Date:</b> {{transaction.date}}<br>
-    </p>
+      <p id="credit-card"><b>Credit Card:</b> **** **** **** {{transaction.card_last_four}}</p>
+      <p id="amount"><b>Amount:</b> ${{transaction.amount}}</p>
+      <p id="date"><b>Date:</b> {{transaction.date}}</p>
 </li>
 </ul>

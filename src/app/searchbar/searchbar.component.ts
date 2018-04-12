@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit, Output, transition } from '@angular/core';
 
 @Component({
   selector: 'app-searchbar',
@@ -8,6 +8,7 @@ import { Component, OnInit, Output } from '@angular/core';
 export class SearchbarComponent implements OnInit {
   mySearch;
   searchChar;
+  query;
   transactions = [
     { amount: 112.98, date: '27-01-2018T12:34', card_last_four: '2544' },
     { amount: 0.45, date: '01-12-2017T9:36', card_last_four: '4434' },
@@ -21,7 +22,7 @@ export class SearchbarComponent implements OnInit {
     { amount: 1111.11, date: '15-01-2018T21:34', card_last_four: '9912' }
   ];
   originalTransactions = this.transactions;
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.sortByDate();
@@ -39,12 +40,26 @@ export class SearchbarComponent implements OnInit {
     });
   }
 
-  fuzzySearch() {
-    const result = this.transactions.filter((transaction) => {
-      const transactionData = String(transaction.amount) + transaction.date + transaction.card_last_four;
-      console.log(transactionData.search(this.mySearch));
-      return transactionData.search(this.mySearch) !== -1;
+  createRegExp(char) {
+    return `.*${char}`;
+  }
+
+  fullQuery() {
+    this.searchChar = this.mySearch.replace(/\ /g, '').toUpperCase().split('');
+    let response = '';
+    this.searchChar.map(char => {
+      response += this.createRegExp(char);
     });
-    console.log(result);
+    response += '.*';
+    return response;
+  }
+
+  fuzzySearch() {
+    this.transactions = this.originalTransactions;
+    this.query = this.fullQuery();
+    const regexp = new RegExp(this.query);
+    this.transactions = this.transactions.filter((transaction) => {
+      return regexp.test(String(transaction.amount)) || regexp.test(transaction.date) || regexp.test(transaction.card_last_four) ;
+    });
   }
 }
