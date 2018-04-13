@@ -74,6 +74,7 @@ export class SearchbarComponent implements OnInit {
         transaction.card_last_four = this.highlight(transaction.card_last_four, char);
         transaction.amount = this.highlight(transaction.amount, char);
       });
+      this.sortByDate();
       return regexp.test(String(transaction.amount)) || regexp.test(transaction.date) || regexp.test(transaction.card_last_four) ;
     });
   }
