@@ -54,6 +54,15 @@ export class SearchbarComponent implements OnInit {
     return response;
   }
 
+  highlight(text: any, input) {
+    if (String(text).indexOf(input) !== -1) {
+      const turnToArray = String(text).split('');
+      turnToArray[String(text).indexOf(input)] = `<strong class="highlight">${input}</strong>`;
+      text = turnToArray.join('');
+     }
+     return text;
+  }
+
   fuzzySearch() {
     this.transactions = JSON.parse(this.originalTransactions);
     this.query = this.fullQuery();
@@ -61,21 +70,9 @@ export class SearchbarComponent implements OnInit {
     this.transactions = this.transactions.filter((transaction: any) => {
       this.searchChar = this.mySearch.replace(/\ /g, '').toUpperCase().split('');
       this.searchChar.forEach(char => {
-        if (transaction.date.indexOf(char) !== -1) {
-         const turnToArray = transaction.date.split('');
-         turnToArray[transaction.date.indexOf(char)] = `<strong class="highlight">${char}</strong>`;
-         transaction.date = turnToArray.join('');
-        }
-        if (String(transaction.amount).indexOf(char) !== -1) {
-          const turnToArray = String(transaction.amount).split('');
-          turnToArray[String(transaction.amount).indexOf(char)] = `<strong class="highlight">${char}</strong>`;
-          transaction.amount = turnToArray.join('');
-        }
-        if (transaction.card_last_four.indexOf(char) !== -1) {
-          const turnToArray = transaction.card_last_four.split('');
-          turnToArray[transaction.card_last_four.indexOf(char)] = `<strong class="highlight">${char}</strong>`;
-          transaction.card_last_four = turnToArray.join('');
-        }
+        transaction.date = this.highlight(transaction.date, char);
+        transaction.card_last_four = this.highlight(transaction.card_last_four, char);
+        transaction.amount = this.highlight(transaction.amount, char);
       });
       return regexp.test(String(transaction.amount)) || regexp.test(transaction.date) || regexp.test(transaction.card_last_four) ;
     });
